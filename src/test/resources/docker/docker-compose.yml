@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  mysql:
+    image: mysql:8.2
+    environment:
+      MYSQL_ROOT_PASSWORD: test
+      MYSQL_DATABASE: test
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/01-schema.sql
