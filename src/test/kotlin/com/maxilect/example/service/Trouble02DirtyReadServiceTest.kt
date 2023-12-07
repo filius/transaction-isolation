@@ -1,7 +1,7 @@
 package com.maxilect.example.service
 
 import com.maxilect.example.configuration.AbstractSpringTest
-import org.assertj.core.api.SoftAssertions.assertSoftly
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -40,15 +40,13 @@ class Trouble02DirtyReadServiceTest : AbstractSpringTest() {
         }
 
         val dirtyReadResult = future1.get()
-        future1.get()
+        future2.get()
 
         val actual = getEntityById(entityId)
 
         logger.info { "Read entity with value = ${actual.value}" }
 
-        assertSoftly { softly ->
-            softly.assertThat(dirtyReadResult.first).isEqualTo(dirtyReadResult.second)
-            softly.assertThat(actual.value).isEqualTo(10) // not 20
-        }
+        assertThat(actual.value).isEqualTo(10) // not 20
+        assertThat(dirtyReadResult.first).isEqualTo(dirtyReadResult.second)
     }
 }

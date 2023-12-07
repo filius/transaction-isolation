@@ -1,7 +1,7 @@
 package com.maxilect.example.service
 
 import com.maxilect.example.configuration.AbstractSpringTest
-import org.assertj.core.api.SoftAssertions.assertSoftly
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -44,9 +44,7 @@ class Trouble03NonRepeatableReadServiceTest : AbstractSpringTest() {
 
         logger.info { "Read entity with value = ${actual.value}" }
 
-        assertSoftly { softly ->
-            softly.assertThat(nonRepeatableResult.first).isEqualTo(nonRepeatableResult.second)
-            softly.assertThat(actual.value).isEqualTo(20)
-        }
+        assertThat(actual.value).isEqualTo(20)
+        assertThat(nonRepeatableResult.first).isEqualTo(nonRepeatableResult.second)
     }
 }

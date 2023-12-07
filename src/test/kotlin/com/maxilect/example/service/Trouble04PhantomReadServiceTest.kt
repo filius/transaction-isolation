@@ -1,7 +1,7 @@
 package com.maxilect.example.service
 
 import com.maxilect.example.configuration.AbstractSpringTest
-import org.assertj.core.api.SoftAssertions.assertSoftly
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -36,9 +36,7 @@ class Trouble04PhantomReadServiceTest : AbstractSpringTest() {
         val phantomResult = future1.get()
         future2.get()
 
-        assertSoftly { softly ->
-            softly.assertThat(phantomResult.first).isEqualTo(phantomResult.second)
-            softly.assertThat(phantomResult.first).isEqualTo(phantomResult.third)
-        }
+        assertThat(phantomResult.first).isEqualTo(phantomResult.second)
+        assertThat(phantomResult.first).isEqualTo(phantomResult.third)
     }
 }

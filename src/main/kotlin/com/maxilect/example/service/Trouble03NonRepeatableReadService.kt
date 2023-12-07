@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class Trouble03NonRepeatableReadService : AbstractService() {
 
-    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     fun nonRepeatableReadTransaction(entityId: Long) : Pair<Long, Long> {
         val entity1 = findEntityById(entityId)
         logger.info { "TX1 First read entity with value = ${entity1.value}" }
