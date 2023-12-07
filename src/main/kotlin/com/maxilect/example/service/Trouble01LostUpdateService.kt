@@ -1,18 +1,17 @@
 package com.maxilect.example.service
 
-import jakarta.persistence.LockModeType
 import mu.KLogging
-import org.springframework.data.jpa.repository.Lock
+import org.hibernate.Session
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.transaction.support.TransactionTemplate
+import java.sql.Connection
 import java.util.concurrent.CyclicBarrier
 
+// Transaction 1                                        |  Transaction 2
+// UPDATE test_table SET value = value + 20 WHERE id=1; |  UPDATE test_table SET value = value + 20 WHERE id=1;
+
 @Service
-class Trouble01LostUpdateService(
-    private val transactionTemplate: TransactionTemplate
-) : AbstractService() {
+class Trouble01LostUpdateService : AbstractService() {
 
     @Transactional
     fun increaseValue(name: String, entityId: Long, increment: Long) {
@@ -29,20 +28,27 @@ class Trouble01LostUpdateService(
         logger.info { "$name Commit" }
     }
 
-    @Transactional
     fun increaseUpdateValue(barrier: CyclicBarrier, name: String, entityId: Long, increment: Long) {
-        logger.info { "Job $name run and wait" }
-        barrier.await()
-        logger.info { "Job $name executed" }
-
-        testRepository.incrementUpdate(entityId, increment)
-        testRepository.flush()
-        logger.info { "$name Increment entity value" }
-
-        clear()
-
-        val entity = findEntityById(entityId)
-        logger.info { "$name Read entity with value = ${entity.value}" }
+        val session: Session = entityManager.unwrap(Session::class.java)
+        logger.info { "$name get session" }
+        session.use { ses ->
+            ses.doWork {
+                it.use { con ->
+                    con.transactionIsolation = Connection.TRANSACTION_READ_UNCOMMITTED
+                    con.autoCommit = false
+                    val stmt = con.prepareStatement(
+                        "UPDATE test_table SET value = value + $increment WHERE id = $entityId"
+                    )
+                    logger.info { "$name wait barrier" }
+                    barrier.await()
+                    logger.info { "$name execute begin" }
+                    stmt.executeUpdate()
+                    logger.info { "$name execute end" }
+                    con.commit()
+                    logger.info { "$name commit" }
+                }
+            }
+        }
     }
 
     companion object : KLogging()

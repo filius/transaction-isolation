@@ -12,8 +12,4 @@ interface TestRepository : JpaRepository<TestEntity, Long> {
     @Modifying
     @Query("UPDATE TestEntity SET value = :newValue WHERE id = :entityId")
     fun phantomReadUpdate(entityId: Long, newValue: Long)
-
-    @Modifying
-    @Query("UPDATE TestEntity SET value = value + :incValue WHERE id = :entityId")
-    fun incrementUpdate(entityId: Long, incValue: Long)
 }
