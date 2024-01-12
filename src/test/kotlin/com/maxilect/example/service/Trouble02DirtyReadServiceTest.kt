@@ -46,7 +46,7 @@ class Trouble02DirtyReadServiceTest : AbstractSpringTest() {
 
         logger.info { "Read entity with value = ${actual.value}" }
 
-        assertThat(actual.value).isEqualTo(10) // not 20
-        assertThat(dirtyReadResult.first).isEqualTo(dirtyReadResult.second)
+        assertThat(actual.value).isEqualTo(10) // commited value
+        assertThat(dirtyReadResult.first).isNotEqualTo(dirtyReadResult.second) // compare first and second read values
     }
 }

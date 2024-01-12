@@ -44,7 +44,7 @@ class Trouble03NonRepeatableReadServiceTest : AbstractSpringTest() {
 
         logger.info { "Read entity with value = ${actual.value}" }
 
-        assertThat(actual.value).isEqualTo(20)
-        assertThat(nonRepeatableResult.first).isEqualTo(nonRepeatableResult.second)
+        assertThat(actual.value).isEqualTo(20) // commited value
+        assertThat(nonRepeatableResult.first).isNotEqualTo(nonRepeatableResult.second) // compare first and second read values
     }
 }

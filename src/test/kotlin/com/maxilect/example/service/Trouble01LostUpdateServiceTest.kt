@@ -6,9 +6,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.CountDownLatch
 import java.util.concurrent.CyclicBarrier
-
 
 class Trouble01LostUpdateServiceTest : AbstractSpringTest() {
 
@@ -47,7 +45,7 @@ class Trouble01LostUpdateServiceTest : AbstractSpringTest() {
         val actual = getEntityById(entityId)
         logger.info { "Read entity with value = ${actual.value}" }
 
-        assertThat(actual.value).isEqualTo(40) // not 60
+        assertThat(actual.value).isLessThan(60) // expected 30 or 40, not 60
     }
 
     @Test
@@ -82,6 +80,6 @@ class Trouble01LostUpdateServiceTest : AbstractSpringTest() {
         val actual = getEntityById(entityId)
         logger.info { "Read entity with value = ${actual.value}" }
 
-        assertThat(actual.value).isEqualTo(40) // not 60
+        assertThat(actual.value).isEqualTo(60) // UPDATE .. SET avoided lost of data
     }
 }

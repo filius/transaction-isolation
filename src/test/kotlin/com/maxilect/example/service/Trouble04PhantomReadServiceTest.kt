@@ -37,6 +37,6 @@ class Trouble04PhantomReadServiceTest : AbstractSpringTest() {
         future2.get()
 
         assertThat(phantomResult.first).isEqualTo(phantomResult.second)
-        assertThat(phantomResult.first).isEqualTo(phantomResult.third)
+        assertThat(phantomResult.first).isNotEqualTo(phantomResult.third)
     }
 }
